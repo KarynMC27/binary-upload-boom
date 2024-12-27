@@ -25,6 +25,10 @@ const PostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  username: {
+    type: String,  // You can store the username here, but it's optional
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
