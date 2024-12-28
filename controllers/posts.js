@@ -50,7 +50,7 @@ module.exports = {
         image: result.secure_url,
         cloudinaryId: result.public_id,
         caption: req.body.caption,
-        likes: 0,
+        likes: [],
         user: req.user.id,
         username: username, 
       });
@@ -62,14 +62,22 @@ module.exports = {
   },
   likePost: async (req, res) => {
     try {
-      await Post.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          $inc: { likes: 1 },
-        }
-      );
-      console.log("Likes +1");
-      res.redirect(`/post/${req.params.id}`);
+      const postId = req.params.id;
+      const userId = req.user.id;
+      const post = await Post.findById(postId);
+      if (!Array.isArray(post.likes)) {
+        post.likes = [];
+      }
+      const likeIndex = post.likes.indexOf(userId);
+      if (likeIndex === -1) {
+        // If not, add the like (add the user's ID to the likes array)
+        post.likes.push(userId);
+      } else {
+        // If yes, remove the like (remove the user's ID from the likes array)
+        post.likes.splice(likeIndex, 1);
+      }
+      await post.save();
+      res.redirect(`/post/${postId}`);
     } catch (err) {
       console.log(err);
     }

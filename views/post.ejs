@@ -13,16 +13,24 @@
         >
           <button class="btn btn-primary fa fa-heart" type="submit"></button>
         </form>
-        <h3 class="col-3">Likes: <%= post.likes %></h3>
-        <%if(post.user == user.id){ %>
+        <h3 class="col-3">Likes: <%= post.likes ? post.likes.length : 0 %></h3>
+        <% if(post.user == user.id){ %>
         <form
+          action="/post/deletePost/<%= post.id %>?_method=DELETE"
+          method="POST"
+          class="col-3"
+        ><button class="btn btn-primary fa fa-trash" type="submit"></button>
+      </form>
+      <% } %>
+       
+        <!-- <form
           action="/post/deletePost/<%= post.id %>?_method=DELETE"
           method="POST"
           class="col-3"
         >
           <button class="btn btn-primary fa fa-trash" type="submit"></button>
-        </form>
-        <%}%>
+        </form> -->
+        
       </div>
     </div>
     <div class="col-3 mt-5">
@@ -43,7 +51,7 @@
         <li class="col-6 justify-content-between mt-5">
           <%= comments[i].comment%>
           <br>
-          <%= comments[i].createdAt%> by 
+          <%= comments[i].createdAt.toLocaleString('en-US', { timeZoneName: 'short' })%> by 
           <%= comments[i].username%>
           <% if (comments[i].user && comments[i].user._id.toString() == user.id) { %>
             <form action="/comment/deleteComment/<%= comments[i]._id %>?_method=DELETE" method="POST">
